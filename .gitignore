@@ -1,0 +1,10 @@
+node_modules
+.history
+db/
+cmd
+dist/
+.quasar
+.DS_Store
+.lintcache
+.eslintcache
+data/

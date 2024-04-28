@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    "strictPropertyInitialization": false,
+    "declaration": false,
+    "emitDecoratorMetadata": true,
+    "baseUrl": ".",
+    "outDir": "dist",
+    "module": "esnext",
+    "strict": true,
+    "noImplicitAny": false,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitThis": true,
+    "strictNullChecks": true,
+    "removeComments": false,
+    "preserveConstEnums": true,
+    "suppressImplicitAnyIndexErrors": true,
+    "sourceMap": false,
+    "pretty": true,
+    "experimentalDecorators": true,
+    "moduleResolution": "Node",
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "allowJs": true,
+    "useUnknownInCatchVariables": false
+  },
+  "include": ["src/**/*.ts", "src/**/*.vue", "test/**/*.ts"],
+  "exclude": [".quasar", "dist", "node_modules"]
+}

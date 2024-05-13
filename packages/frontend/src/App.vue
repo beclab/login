@@ -34,13 +34,13 @@ export default defineComponent({
 	setup() {
 		const tokenStore = useTokenStore();
 
-		onMounted(() => {
+		onMounted(async () => {
 			const host = window.location.origin;
 			if (host.indexOf('auth.local.') <= -1) {
 				const authIndex = host.indexOf('auth.');
 				const pingLocalUrl =
 					host.slice(0, authIndex + 5) + 'local.' + host.slice(authIndex + 5);
-				const data = tokenStore.pingLoadData(pingLocalUrl);
+				const data = await tokenStore.pingLoadData(pingLocalUrl);
 				if (data) {
 					const href = window.location.href;
 					const currentUrl =

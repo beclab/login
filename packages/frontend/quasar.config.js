@@ -1,7 +1,7 @@
 const { configure } = require('quasar/wrappers');
 const path = require('path');
 
-module.exports = configure(function (/* ctx */) {
+module.exports = configure(function (ctx) {
 	return {
 		eslint: {
 			warnings: true,
@@ -10,16 +10,12 @@ module.exports = configure(function (/* ctx */) {
 
 		preFetch: true,
 		boot: ['i18n', 'axios', 'smartEnginEntrance'],
-		css: ['app.scss', 'fonts.scss'],
-		extras: [
-			'roboto-font',
-			'material-icons',
-			'bootstrap-icons',
-			'themify',
-			'material-icons',
-			'material-symbols-outlined',
-			'material-symbols-rounded'
+		css: [
+			'app.scss',
+			'fonts.scss',
+			ctx.dev ? 'font.dev.scss' : 'font.pro.scss'
 		],
+		extras: ['material-icons'],
 
 		build: {
 			target: {

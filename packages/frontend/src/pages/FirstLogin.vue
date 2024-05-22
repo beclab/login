@@ -28,12 +28,10 @@
 					autofocus
 				>
 					<template v-slot:append>
-						<q-img
+						<q-icon
 							v-if="pwd"
 							class="cursor-pointer animated fadeIn"
-							src="../assets/arrow_circle_right.svg"
-							spinner-color="white"
-							style="width: 20px; height: 20px"
+							name="sym_r_arrow_circle_right"
 							@click="onLogin"
 						/>
 					</template>

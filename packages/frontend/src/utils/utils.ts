@@ -66,3 +66,12 @@ export function getUrlParams(url: string) {
 	}
 	return obj;
 }
+
+export function debounce(fn: (...args: any[]) => any, delay: number) {
+	let timeout: number;
+
+	return function (...args: any[]) {
+		clearTimeout(timeout);
+		timeout = window.setTimeout(() => fn(...args), delay);
+	};
+}

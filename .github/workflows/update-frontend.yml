@@ -5,7 +5,7 @@ on:
 
   push:
     branches:
-      - "main"
+      - "dev/mobile"
     tags:
       - 'v*'
 

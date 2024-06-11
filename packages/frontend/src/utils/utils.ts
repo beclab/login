@@ -10,7 +10,6 @@ function bind(obj: any, evname: any, fn: any) {
 
 export function onload() {
 	bind(window, 'message', function (e: any) {
-		console.log(e);
 		const data = JSON.parse(e.data);
 	});
 }

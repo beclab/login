@@ -32,9 +32,6 @@ export default defineComponent({
 		const tokenStore = useTokenStore();
 
 		const currentComponent = computed(() => {
-			console.log('currentView', tokenStore.currentView);
-			console.log('isMobile', isMobile.value);
-
 			if (isMobile.value) {
 				return `${tokenStore.currentView}Mobile`;
 			}

@@ -51,7 +51,6 @@ async function checkApiState() {
 	try {
 		isInApiCheck = true;
 		const res = await tokenStore.apiState();
-		console.log('apiState res', res);
 		if (res && typeof window !== 'undefined') {
 			loading.value = true;
 			await window.location.replace(tokenStore.getDesktopURL());

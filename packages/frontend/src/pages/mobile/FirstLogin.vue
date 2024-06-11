@@ -66,8 +66,6 @@ const onLogin = async () => {
 			pwd.value
 		);
 
-		console.log('firstfactor', firstfactor);
-
 		if (firstfactor.fa2) {
 			// redirect('/secondFactorForm');
 			tokenStore.currentView = CurrentView.MOBILEVERIFICATION;

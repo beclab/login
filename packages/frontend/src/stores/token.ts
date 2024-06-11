@@ -43,9 +43,6 @@ export const useTokenStore = defineStore('token', {
 			}
 			const name = this.user.terminusName.replace('@', '.');
 			const desktopURL = 'https://desktop.' + (isLocal ? 'local.' : '') + name;
-			//
-			console.log('desktopURL');
-			console.log(desktopURL);
 
 			const targetURL = this.urlParams.rd
 				? decodeURIComponent(this.urlParams.rd)
@@ -75,8 +72,6 @@ export const useTokenStore = defineStore('token', {
 			} else {
 				const re = new RegExp('^[1-3]?[0-9]\\.png');
 				if (re.test(this.user.avatar)) {
-					console.log('re test true');
-
 					if (useGlobalCDN) {
 						return 'https://file.bttcdn.com/avatar3/' + this.user.avatar;
 					} else {
@@ -90,17 +85,13 @@ export const useTokenStore = defineStore('token', {
 				} else {
 					try {
 						const vp = JSON.parse(this.user.avatar);
-						console.log(vp);
 						if (vp) {
 							const vcstr = Encoder.bytesToString(
 								Encoder.base64UrlToBytes(
 									vp.verifiableCredential![0].split('.')[1]
 								)
 							);
-							console.log(vcstr);
 							const vc = JSON.parse(vcstr);
-							console.log(vc);
-							console.log(vc.vc.credentialSubject.image);
 							let imageUrl = vc.vc.credentialSubject.image;
 							if (imageUrl.startsWith('ipfs://')) {
 								imageUrl = imageUrl.replace(
@@ -109,13 +100,11 @@ export const useTokenStore = defineStore('token', {
 								);
 							}
 
-							console.log(imageUrl);
 							return imageUrl;
 						} else {
 							return 'https://file.bttcdn.com/avatar3/1.png';
 						}
 					} catch (e) {
-						console.log(e);
 						return 'https://file.bttcdn.com/avatar3/1.png';
 					}
 				}
@@ -149,7 +138,6 @@ export const useTokenStore = defineStore('token', {
 		async apiState(): Promise<boolean> {
 			try {
 				const data: any = await axios.get(this.url + '/api/state');
-				console.log(data);
 				if (data.authentication_level === 2) {
 					return true;
 				}
@@ -194,7 +182,6 @@ export const useTokenStore = defineStore('token', {
 			}
 
 			const url = 'https://desktop.' + (isLocal ? 'local.' : '') + name;
-			console.log(url);
 			return url;
 		},
 

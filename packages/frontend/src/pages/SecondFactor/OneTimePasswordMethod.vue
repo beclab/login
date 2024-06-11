@@ -1,10 +1,13 @@
 <template>
 	<div class="security column items-center justify-center">
 		<div class="column items-center justify-center">
-			<div class="iconContainer q-mb-md">
+			<div
+				class="iconContainer"
+				:style="{ width: size + 'px', height: size + 'px' }"
+			>
 				<q-circular-progress
 					:value="progressPeriod"
-					size="100px"
+					:size="`${size}px`"
 					:thickness="1"
 					color="white"
 					class="q-ma-md"
@@ -12,15 +15,15 @@
 				/>
 			</div>
 
-			<div class="text-white secend-title">{{ t('totp_title') }}</div>
-			<div class="text-white secend-desc q-mb-md">
+			<div class="secend-title q-mb-sm">{{ t('totp_title') }}</div>
+			<div class="secend-desc">
 				{{ t('totp_message') }}
 			</div>
 
 			<OtpInput
 				:class="passwordErr ? 'shake' : ''"
 				ref="otpInputRef"
-				input-classes="otp-input"
+				:inputClasses="['otp-input', isMobile ? 'mobile-size' : 'pc-size']"
 				separator=""
 				:num-inputs="6"
 				:should-auto-focus="true"
@@ -36,6 +39,7 @@
 import { ref, onMounted, defineExpose } from 'vue';
 import OtpInput from 'vue3-otp-input';
 import { useI18n } from 'vue-i18n';
+import { isMobile } from '../../utils/platform';
 
 const props = defineProps({
 	digits: {
@@ -52,6 +56,11 @@ const props = defineProps({
 		type: Boolean,
 		required: false,
 		default: false
+	},
+	size: {
+		type: Number,
+		required: false,
+		default: 100
 	}
 });
 
@@ -112,28 +121,40 @@ defineExpose({
 }
 
 .iconContainer {
-	width: 100px;
-	height: 100px;
 	display: flex;
 	align-items: center;
-	justify-content: center;
+	justify-content: flex-start;
 	border-radius: 50px;
 	border: 5px solid #ffffff;
 	box-sizing: border-box;
 	opacity: 0.5;
+	margin-bottom: 30px;
 }
 
 .secend-title {
 	font-weight: 600;
 	font-size: 24px;
+	line-height: 32px;
+	color: #ffffff;
 }
 .secend-desc {
 	font-size: 14px;
+	font-weight: 400;
+	color: #ffffff;
+	margin-bottom: 20px;
+}
+
+.mobile-size {
+	width: 46px;
+	height: 68px;
+}
+
+.pc-size {
+	width: 32px;
+	height: 40px;
 }
 
 .otp-input {
-	width: 32px;
-	height: 40px;
 	line-height: 40px;
 	margin: 0 4px;
 	font-size: 23px;

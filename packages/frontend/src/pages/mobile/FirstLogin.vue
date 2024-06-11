@@ -1,26 +1,38 @@
 <template>
 	<div class="login-box">
 		<q-card class="login-card">
-			<q-card-section class="column q-py-xl">
+			<q-card-section class="column">
 				<div class="avator">
-					<div :style="{ width: '124px', height: '124px' }">
-						<img
-							:src="tokenStore.avatar_url"
-							style="width: 100%; height: 100%"
-						/>
-					</div>
+					<img :src="tokenStore.avatar_url" style="width: 100%; height: 100%" />
 				</div>
-
-				<p class="login-name">{{ t('mobile_veri') }}</p>
-				<p class="login-conter" @click="toSecondFactor">
-					{{ t('login_useing_auth') }}
+				<p class="login-name">{{ username }}</p>
+				<p class="login-conter">
+					{{ t('login_title') }}
 				</p>
+
+				<InputAni
+					ref="InputAniRef"
+					:loading="loading"
+					@onLogin="onLogin"
+					@updatePwd="updatePwd"
+				/>
+
+				<div
+					class="login row items-center justify-center"
+					v-if="!loading && pwd"
+					@click="onLogin"
+				>
+					<q-img
+						src="../../assets/mobile/login-icon.svg"
+						style="width: 18px; height: 18px"
+					/>
+				</div>
 
 				<div class="refush row items-center justify-center" v-if="loading">
 					<q-img
-						src="src/assets/progress_activity.svg"
+						src="../../assets/mobile/login-loading.svg"
 						spinner-color="white"
-						style="width: 18px; height: 18px"
+						style="width: 26px; height: 26px"
 					/>
 				</div>
 			</q-card-section>
@@ -28,58 +40,59 @@
 	</div>
 </template>
 <script lang="ts" setup>
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useTokenStore } from 'src/stores/token';
 import { CurrentView } from 'src/constants/index';
+import InputAni from './../../components/InputAni.vue';
 
 const { t } = useI18n();
 const tokenStore = useTokenStore();
+const pwd = ref('');
 const loading = ref(false);
+const InputAniRef = ref();
+const username =
+	tokenStore.user.terminusName &&
+	tokenStore.user.terminusName.slice(
+		0,
+		tokenStore.user.terminusName.indexOf('@')
+	);
 
-const toSecondFactor = () => {
-	tokenStore.currentView = CurrentView.SECONDFACTORFORM;
+const onLogin = async () => {
+	loading.value = true;
+	try {
+		const firstfactor = await tokenStore.login(
+			tokenStore.user.terminusName.split('@')[0],
+			pwd.value
+		);
+
+		if (firstfactor.fa2) {
+			// redirect('/secondFactorForm');
+			tokenStore.currentView = CurrentView.MOBILEVERIFICATION;
+		} else {
+			if (firstfactor.redirect) {
+				window.location.replace(firstfactor.redirect);
+			} else {
+				if (typeof window !== 'undefined') {
+					window.location.replace(
+						'https://desktop.' +
+							tokenStore.user.terminusName.replace('@', '.') +
+							'/'
+					);
+				}
+			}
+		}
+	} catch (err) {
+		await InputAniRef.value.shakeInput();
+		await InputAniRef.value.handleClearInput();
+	} finally {
+		loading.value = false;
+	}
 };
 
-let interval: any = null;
-
-let isInApiCheck = false;
-async function checkApiState() {
-	if (isInApiCheck) {
-		return false;
-	}
-
-	if (!tokenStore.requestTermiPass) {
-		return;
-	}
-
-	try {
-		isInApiCheck = true;
-		const res = await tokenStore.apiState();
-		if (res && typeof window !== 'undefined') {
-			loading.value = true;
-			await window.location.replace(tokenStore.getDesktopURL());
-			loading.value = false;
-		} else {
-			isInApiCheck = false;
-		}
-	} catch (e) {
-		console.log(e);
-		isInApiCheck = false;
-	}
-}
-
-onMounted(() => {
-	interval = setInterval(async () => {
-		await checkApiState();
-	}, 500);
-});
-
-onUnmounted(() => {
-	if (interval) {
-		clearInterval(interval);
-	}
-});
+const updatePwd = (value) => {
+	pwd.value = value;
+};
 </script>
 
 <style lang="scss">
@@ -93,6 +106,9 @@ onUnmounted(() => {
 	.q-field__control {
 		height: 100% !important;
 		padding-left: 24px;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
 	}
 	.q-field__marginal {
 		height: 32px;
@@ -102,7 +118,7 @@ onUnmounted(() => {
 <style lang="scss" scoped>
 .login-box {
 	width: 100%;
-	height: 100%;
+	height: 100vh;
 	background-position: center;
 	background-repeat: no-repeat;
 	background-size: 100% 100%;
@@ -111,18 +127,21 @@ onUnmounted(() => {
 	left: 0;
 	display: flex;
 	align-items: center;
+	overflow: hidden;
 
 	.login-card {
-		margin: 0 auto 20vh;
+		width: 500px;
+		margin: 0 auto;
 		background-color: transparent;
 		box-shadow: none;
+		padding-bottom: 56px;
 		.column {
 			display: flex;
 			justify-content: center;
 			align-items: center;
 			.avator {
-				width: 124px;
-				height: 124px;
+				width: 100px;
+				height: 100px;
 				border-radius: 62px;
 				overflow: hidden;
 			}
@@ -131,35 +150,18 @@ onUnmounted(() => {
 				font-family: Roboto-Bold, Roboto;
 				font-weight: bold;
 				color: #ffffff;
-				margin-top: 50px;
+				margin-top: 30px;
 				margin-bottom: 4px;
 			}
 			.login-conter {
 				font-size: 14px;
 				font-family: Roboto-Regular, Roboto;
 				font-weight: 400;
-				color: rgba(255, 255, 255, 0.8);
-				cursor: pointer;
-				text-decoration: underline;
-				text-underline-offset: 2px;
+				color: #ffffff;
 			}
 			.login-btn {
 				margin-top: 48px;
 			}
-		}
-	}
-	.item-margin {
-		margin: 5px;
-		width: 220px;
-		height: 32px !important;
-		background: rgba(255, 255, 255, 0.4);
-		border-radius: 8px;
-		backdrop-filter: blur(20px);
-		font-size: 12px;
-		padding-left: 12px;
-		padding-right: 10px;
-		.cursor-pointer {
-			color: #ffffff;
 		}
 	}
 }
@@ -184,17 +186,29 @@ onUnmounted(() => {
 	height: 0px;
 }
 
+.login {
+	width: 56px;
+	height: 56px;
+	border-radius: 28px;
+	background: rgba(255, 255, 255, 0.98);
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: -70px;
+	margin: auto;
+	overflow: hidden;
+}
+
 .refush {
-	width: 32px;
-	height: 32px;
-	border-radius: 16px;
+	width: 56px;
+	height: 56px;
+	border-radius: 28px;
 	background: rgba(31, 24, 20, 0.3);
-	margin: 0 auto;
 	animation: rotate 1s linear infinite;
 	position: absolute;
 	left: 0;
 	right: 0;
-	bottom: -10px;
+	bottom: -70px;
 	margin: auto;
 	overflow: hidden;
 }

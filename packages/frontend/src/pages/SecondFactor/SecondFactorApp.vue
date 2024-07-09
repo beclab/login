@@ -30,7 +30,8 @@ import {
 	onMounted,
 	onUnmounted,
 	nextTick,
-	getCurrentInstance
+	getCurrentInstance,
+	ComponentInternalInstance
 } from 'vue';
 import { Notify, Loading } from 'quasar';
 import { useTokenStore } from '../../stores/token';
@@ -50,7 +51,10 @@ export default defineComponent({
 		});
 		const passwordErr = ref(false);
 		const oneTimePasswordMethod = ref();
-		const { proxy } = getCurrentInstance();
+		const instance = getCurrentInstance() as ComponentInternalInstance | null;
+		const proxy = instance?.proxy as any & {
+			clearInput: () => void;
+		};
 
 		const handleOnComplete = (value: any) => {
 			oneTimePasswordMethod.value = value;

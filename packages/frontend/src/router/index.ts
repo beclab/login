@@ -7,7 +7,7 @@ import {
 } from 'vue-router';
 
 import routes from './routes';
-import { useTokenStore } from 'stores/token';
+import { useTokenStore } from '../stores/token';
 
 export default route(function () {
 	const createHistory = process.env.SERVER
@@ -22,7 +22,7 @@ export default route(function () {
 		history: createHistory(process.env.VUE_ROUTER_BASE)
 	});
 
-	Router.beforeEach(async (to, from, next) => {
+	Router.beforeEach(async (to, _from, next) => {
 		const tokenStore = useTokenStore();
 
 		if (to.matched.some((record) => record.meta.requiresAuth)) {

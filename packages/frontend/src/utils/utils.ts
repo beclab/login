@@ -11,6 +11,7 @@ function bind(obj: any, evname: any, fn: any) {
 export function onload() {
 	bind(window, 'message', function (e: any) {
 		const data = JSON.parse(e.data);
+		console.log('data', data);
 	});
 }
 

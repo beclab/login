@@ -25,7 +25,8 @@ import {
 	ref,
 	onUnmounted,
 	nextTick,
-	getCurrentInstance
+	getCurrentInstance,
+	ComponentInternalInstance
 } from 'vue';
 import { Token } from '@bytetrade/core';
 import { useTokenStore } from '../../stores/token';
@@ -44,7 +45,8 @@ export default defineComponent({
 		});
 		const oneTimePasswordMethod = ref();
 		const passwordErr = ref(false);
-		const { proxy } = getCurrentInstance();
+		const instance = getCurrentInstance() as ComponentInternalInstance | null;
+		const proxy = instance?.proxy as any & { clearInput: () => void };
 		const loading = ref(false);
 
 		const handleOnComplete = (value: any) => {

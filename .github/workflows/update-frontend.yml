@@ -40,6 +40,10 @@ jobs:
           key: ${{ runner.os }}-node-${{ hashFiles('**/packagge-lock.json')}}
           restore-keys: |
             ${{ runner.os }}-node-
+      - name: Install
+        run: |
+          npm install
+      - run: npm i -g @quasar/cli
       - name: Install fonttools
         run: pip3 install fonttools brotli
       - name: Download fonttools Files
@@ -54,10 +58,6 @@ jobs:
           sudo chmod 755 fonttools
           cd ./fonttools
           ./subset_font.sh nyTnjDwKNJ_190FjzaqkNCeE.woff2 unicodes.txt MaterialSymbolsRounded.woff2 ../packages/frontend/src/assets/fonts
-      - name: Install
-        run: |
-          npm install
-      - run: npm i -g @quasar/cli
       - name: Build
         run: npm run app:build
       - name: Build and push

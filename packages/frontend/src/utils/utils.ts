@@ -10,8 +10,8 @@ function bind(obj: any, evname: any, fn: any) {
 
 export function onload() {
 	bind(window, 'message', function (e: any) {
-		console.log(e);
 		const data = JSON.parse(e.data);
+		console.log('data', data);
 	});
 }
 
@@ -65,4 +65,13 @@ export function getUrlParams(url: string) {
 		obj[arr[0]] = arr[1];
 	}
 	return obj;
+}
+
+export function debounce(fn: (...args: any[]) => any, delay: number) {
+	let timeout: number;
+
+	return function (...args: any[]) {
+		clearTimeout(timeout);
+		timeout = window.setTimeout(() => fn(...args), delay);
+	};
 }

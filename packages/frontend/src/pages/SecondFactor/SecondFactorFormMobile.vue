@@ -3,6 +3,7 @@
 		<q-card class="factor-card colnum items-center justify-center">
 			<OneTimePasswordMethod
 				ref="onetimeRef"
+				:size="80"
 				:passwordErr="passwordErr"
 				:digits="infitotp.digits"
 				:period="infitotp.period"
@@ -11,7 +12,7 @@
 
 			<div class="refush row items-center justify-center" v-if="loading">
 				<q-img
-					src="../../assets/progress_activity.svg"
+					src="./../../assets/mobile/login-loading.svg"
 					spinner-color="white"
 					style="width: 18px; height: 18px"
 				/>
@@ -103,7 +104,7 @@ export default defineComponent({
 	}
 });
 </script>
-<style lang="scss" scoped>
+<style lang="scss">
 .factor-box {
 	width: 100vw;
 	height: 100vh;
@@ -186,16 +187,16 @@ export default defineComponent({
 		}
 
 		.refush {
-			width: 32px;
-			height: 32px;
-			border-radius: 16px;
+			width: 56px;
+			height: 56px;
+			border-radius: 28px;
 			background: rgba(31, 24, 20, 0.3);
 			margin: 0 auto;
 			animation: rotate 1s linear infinite;
 			position: absolute;
 			left: 0;
 			right: 0;
-			bottom: -10px;
+			bottom: -36px;
 			margin: auto;
 			overflow: hidden;
 		}

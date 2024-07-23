@@ -12,6 +12,9 @@ import queryString from 'query-string';
 export default defineComponent({
 	name: 'App',
 	async preFetch({ redirect }) {
+		if (document.getElementById('Loading'))
+			document.getElementById('Loading')?.remove();
+
 		const tokenStore = useTokenStore();
 		let host = '';
 		if (typeof window !== 'undefined') {

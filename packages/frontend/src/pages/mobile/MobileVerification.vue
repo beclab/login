@@ -3,12 +3,7 @@
 		<q-card class="login-card">
 			<q-card-section class="column q-py-xl">
 				<div class="avator">
-					<div :style="{ width: '124px', height: '124px' }">
-						<img
-							:src="tokenStore.avatar_url"
-							style="width: 100%; height: 100%"
-						/>
-					</div>
+					<img :src="tokenStore.avatar_url" style="width: 100%; height: 100%" />
 				</div>
 
 				<p class="login-name">{{ t('mobile_veri') }}</p>
@@ -121,24 +116,26 @@ onUnmounted(() => {
 			justify-content: center;
 			align-items: center;
 			.avator {
-				width: 124px;
-				height: 124px;
+				width: 100px;
+				height: 100px;
 				border-radius: 62px;
 				overflow: hidden;
 			}
 			.login-name {
 				font-size: 24px;
+				line-height: 32px;
 				font-family: Roboto-Bold, Roboto;
 				font-weight: bold;
 				color: #ffffff;
-				margin-top: 50px;
-				margin-bottom: 4px;
+				margin-top: 30px;
+				margin-bottom: 30px;
+				text-align: center;
 			}
 			.login-conter {
 				font-size: 14px;
 				font-family: Roboto-Regular, Roboto;
 				font-weight: 400;
-				color: rgba(255, 255, 255, 0.8);
+				color: rgba(255, 255, 255, 1);
 				cursor: pointer;
 				text-decoration: underline;
 				text-underline-offset: 2px;

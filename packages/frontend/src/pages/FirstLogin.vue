@@ -52,6 +52,7 @@ import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useTokenStore } from 'src/stores/token';
 import { CurrentView } from 'src/constants/index';
+import { BtNotify, NotifyDefinedType } from '@bytetrade/ui';
 
 const { t } = useI18n();
 const tokenStore = useTokenStore();
@@ -93,6 +94,12 @@ const onLogin = async () => {
 			}
 		}
 	} catch (err) {
+		console.log('eeee', err.response.data);
+		BtNotify.show({
+			type: NotifyDefinedType.MESSAGE,
+			message: err.response.data.message
+		});
+
 		await shakeInput();
 		await handleClearInput();
 	} finally {

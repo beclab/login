@@ -1,8 +1,8 @@
 export default {
-	login_title: 'Enter Password to Log in to Terminus',
+	login_title: 'Enter password to log in',
 	login_hint_password: 'Password',
-	mobile_veri: 'Please Confirm on the Mobile Version of TermiPass',
-	login_useing_auth: 'Manually Enter the OTP on TermiPass',
-	totp_title: 'Safety Verification',
-	totp_message: 'Please enter the OTP on TermiPass'
+	mobile_veri: 'Confirm on TermiPass app',
+	login_useing_auth: 'Veify using one-time password from TermiPass',
+	totp_title: 'Safety verification',
+	totp_message: 'Enter the one-time password from TermiPass'
 };

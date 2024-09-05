@@ -6,7 +6,8 @@
 import { defineComponent, onMounted } from 'vue';
 import { useTokenStore } from './stores/token';
 import { CurrentView } from 'src/constants/index';
-
+import { supportLanguages } from './i18n';
+import { i18n } from './boot/i18n';
 import queryString from 'query-string';
 
 export default defineComponent({
@@ -53,6 +54,23 @@ export default defineComponent({
 			}
 		});
 
+		let terminusLanguage = '';
+		let terminusLanguageInfo = document.querySelector(
+			'meta[name="terminus-language"]'
+		);
+		if (terminusLanguageInfo && terminusLanguageInfo.content) {
+			terminusLanguage = terminusLanguageInfo.content;
+		} else {
+			terminusLanguage = navigator.language;
+		}
+
+		console.log(navigator.language);
+
+		if (terminusLanguage) {
+			if (supportLanguages.find((e) => e.value == terminusLanguage)) {
+				i18n.global.locale.value = terminusLanguage;
+			}
+		}
 		return {};
 	}
 });

@@ -189,7 +189,7 @@ export default defineComponent({
 		.refush {
 			width: 56px;
 			height: 56px;
-			border-radius: 28px;
+			border-radius: 28px !important;
 			background: rgba(31, 24, 20, 0.3);
 			margin: 0 auto;
 			animation: rotate 1s linear infinite;

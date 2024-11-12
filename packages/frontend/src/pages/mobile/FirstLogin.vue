@@ -45,6 +45,7 @@ import { useI18n } from 'vue-i18n';
 import { useTokenStore } from 'src/stores/token';
 import { CurrentView } from 'src/constants/index';
 import InputAni from './../../components/InputAni.vue';
+import { BtNotify, NotifyDefinedType } from '@bytetrade/ui';
 
 const { t } = useI18n();
 const tokenStore = useTokenStore();
@@ -83,6 +84,10 @@ const onLogin = async () => {
 			}
 		}
 	} catch (err) {
+		BtNotify.show({
+			type: NotifyDefinedType.MESSAGE,
+			message: err.response.data.message
+		});
 		await InputAniRef.value.shakeInput();
 		await InputAniRef.value.handleClearInput();
 	} finally {
@@ -131,7 +136,7 @@ const updatePwd = (value) => {
 
 	.login-card {
 		width: 500px;
-		margin: 0 auto;
+		margin: 0 auto 50px;
 		background-color: transparent;
 		box-shadow: none;
 		padding-bottom: 56px;
@@ -152,6 +157,8 @@ const updatePwd = (value) => {
 				color: #ffffff;
 				margin-top: 30px;
 				margin-bottom: 4px;
+				text-underline-position: from-font;
+				text-decoration-skip-ink: none;
 			}
 			.login-conter {
 				font-size: 14px;
@@ -165,8 +172,7 @@ const updatePwd = (value) => {
 		}
 	}
 }
-:global(.q-field__control) {
-}
+
 :global(.text-white) {
 	font-size: 16px;
 	font-family: Roboto-Medium, Roboto;

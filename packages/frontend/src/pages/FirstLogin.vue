@@ -14,28 +14,28 @@
 				<p class="login-conter">
 					{{ t('login_title') }}
 				</p>
-				<q-input
-					dense
-					:disable="loading"
-					stack-label
-					class="item-margin q_field_password"
-					:class="passwordErr ? 'shake' : ''"
-					v-model="pwd"
-					@keydown="onkeydown"
-					:placeholder="t('login_hint_password')"
-					type="password"
-					ref="loginRef"
-					autofocus
-				>
-					<template v-slot:append>
-						<q-icon
-							v-if="pwd"
-							class="cursor-pointer animated fadeIn"
-							name="sym_r_arrow_circle_right"
-							@click="onLogin"
-						/>
-					</template>
-				</q-input>
+				<div class="item-margin" :class="passwordErr ? 'shake' : ''">
+					<input
+						class="text-white"
+						:class="loading ? 'disable' : ''"
+						type="password"
+						id="password"
+						v-model="pwd"
+						ref="loginRef"
+						:disabled="loading"
+						@keydown="onkeydown"
+					/>
+					<label v-if="!pwd" class="placeholder-label">{{
+						t('login_hint_password')
+					}}</label>
+					<q-icon
+						v-if="pwd"
+						class="cursor-pointer animated fadeIn"
+						name="sym_r_arrow_circle_right"
+						@click="onLogin"
+						size="20px"
+					/>
+				</div>
 				<div class="refush row items-center justify-center" v-if="loading">
 					<q-img
 						src="../assets/progress_activity.svg"
@@ -56,7 +56,7 @@ import { BtNotify, NotifyDefinedType } from '@bytetrade/ui';
 
 const { t } = useI18n();
 const tokenStore = useTokenStore();
-const pwd = ref('');
+const pwd = ref();
 const loginRef = ref();
 const loading = ref(false);
 const passwordErr = ref(false);
@@ -74,8 +74,6 @@ const onLogin = async () => {
 			tokenStore.user.terminusName.split('@')[0],
 			pwd.value
 		);
-
-		console.log('firstfactor', firstfactor);
 
 		if (firstfactor.fa2) {
 			// redirect('/secondFactorForm');
@@ -133,24 +131,31 @@ const onkeydown = async (e: any) => {
 };
 </script>
 
-<style lang="scss">
-.q_field_password {
-	.q-field__native {
-		font-size: 14px;
-		font-family: Roboto-Medium, Roboto;
-		font-weight: 500;
-		color: #ffffff;
-	}
-	.q-field__control {
-		height: 100% !important;
-		padding-left: 24px;
-	}
-	.q-field__marginal {
-		height: 32px;
-	}
+<!-- <style lang="scss">
+input[type='password'] {
+	font-size: 28px !important;
+	caret-color: #ffffff;
+	letter-spacing: 1px;
+	line-height: 16px;
+	height: 16px;
 }
-</style>
+input[type='password']::placeholder {
+	font-size: 12px;
+	line-height: 20px;
+}
+</style> -->
 <style lang="scss" scoped>
+input[type='password'] {
+	font-size: 28px !important;
+	caret-color: #ffffff;
+	letter-spacing: 1px;
+	line-height: 16px;
+	height: 16px;
+}
+input[type='password']::placeholder {
+	font-size: 12px;
+	line-height: 20px;
+}
 .login-box {
 	width: 100%;
 	height: 100%;
@@ -204,16 +209,44 @@ const onkeydown = async (e: any) => {
 		background: rgba(255, 255, 255, 0.4);
 		border-radius: 8px;
 		backdrop-filter: blur(20px);
-		font-size: 12px;
+		// font-size: 12px;
 		padding-left: 12px;
 		padding-right: 10px;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		box-sizing: border-box;
+		position: relative;
 		.cursor-pointer {
 			color: #ffffff;
 		}
+
+		.placeholder-label {
+			position: absolute;
+			left: 14px;
+			top: 50%;
+			transform: translateY(-50%);
+			color: rgba(255, 255, 255, 0.5);
+			pointer-events: none;
+		}
+
+		input {
+			width: 180px;
+			background-color: transparent;
+			border: none;
+			padding: 0;
+			margin: 0;
+			&.disable {
+				pointer-events: none;
+			}
+			&:focus {
+				outline: none;
+				box-shadow: none;
+			}
+		}
 	}
 }
-:global(.q-field__control) {
-}
+
 :global(.text-white) {
 	font-size: 16px;
 	font-family: Roboto-Medium, Roboto;

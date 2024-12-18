@@ -1,6 +1,7 @@
 const { configure } = require('quasar/wrappers');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
+const PreloadWebpackPlugin = require('preload-webpack-plugin');
 
 module.exports = configure(function (ctx) {
 	return {
@@ -15,13 +16,9 @@ module.exports = configure(function (ctx) {
 
 		preFetch: true,
 		boot: ['i18n', 'axios', 'smartEnginEntrance'],
-		css: [
-			'app.scss',
-			'fonts.scss',
-			ctx.dev ? 'font.dev.scss' : 'font.pro.scss'
-		],
+		css: ['app.scss', ctx.dev ? 'font.dev.scss' : 'font.pro.scss'],
 
-		extras: ['material-icons'],
+		extras: ['material-icons', 'roboto-font'],
 
 		vendor: {
 			remove: ['@bytetrade/ui']
@@ -45,6 +42,18 @@ module.exports = configure(function (ctx) {
 			// analyze: true,
 			extractCSS: true,
 			sourceMap: true,
+
+			extendWebpack(cfg) {
+				!ctx.dev &&
+					cfg.plugins.push(
+						new PreloadWebpackPlugin({
+							rel: 'preload',
+							include: 'allAssets',
+							fileWhitelist: [/.+MaterialSymbolsRounded.+/],
+							as: 'font'
+						})
+					);
+			},
 
 			chainWebpack(chain, { isClient, isServer }) {
 				if (isClient) {

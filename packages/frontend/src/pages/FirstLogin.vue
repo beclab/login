@@ -146,11 +146,12 @@ input[type='password']::placeholder {
 </style> -->
 <style lang="scss" scoped>
 input[type='password'] {
-	font-size: 28px !important;
+	font-size: 38px !important;
 	caret-color: #ffffff;
 	letter-spacing: 1px;
 	line-height: 16px;
 	height: 16px;
+	font-family: 'Arial', sans-serif;
 }
 input[type='password']::placeholder {
 	font-size: 12px;

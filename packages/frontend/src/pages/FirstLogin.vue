@@ -131,26 +131,13 @@ const onkeydown = async (e: any) => {
 };
 </script>
 
-<!-- <style lang="scss">
+<style lang="scss" scoped>
 input[type='password'] {
 	font-size: 28px !important;
 	caret-color: #ffffff;
 	letter-spacing: 1px;
-	line-height: 16px;
-	height: 16px;
-}
-input[type='password']::placeholder {
-	font-size: 12px;
-	line-height: 20px;
-}
-</style> -->
-<style lang="scss" scoped>
-input[type='password'] {
-	font-size: 38px !important;
-	caret-color: #ffffff;
-	letter-spacing: 1px;
-	line-height: 16px;
-	height: 16px;
+	line-height: 28px;
+	height: 28px;
 	font-family: 'Arial', sans-serif;
 }
 input[type='password']::placeholder {

@@ -15,16 +15,19 @@
 					{{ t('login_title') }}
 				</p>
 				<div class="item-margin" :class="passwordErr ? 'shake' : ''">
-					<input
-						class="text-white"
-						:class="loading ? 'disable' : ''"
-						type="password"
-						id="password"
-						v-model="pwd"
-						ref="loginRef"
-						:disabled="loading"
-						@keydown="onkeydown"
-					/>
+					<div class="input-wrap">
+						<input
+							class="text-white"
+							:class="loading ? 'disable' : ''"
+							type="password"
+							id="password"
+							v-model="pwd"
+							ref="loginRef"
+							:disabled="loading"
+							@keydown="onkeydown"
+						/>
+					</div>
+
 					<label v-if="!pwd" class="placeholder-label">{{
 						t('login_hint_password')
 					}}</label>
@@ -132,18 +135,6 @@ const onkeydown = async (e: any) => {
 </script>
 
 <style lang="scss" scoped>
-input[type='password'] {
-	font-size: 28px !important;
-	caret-color: #ffffff;
-	letter-spacing: 1px;
-	line-height: 28px;
-	height: 28px;
-	font-family: 'Arial', sans-serif;
-}
-input[type='password']::placeholder {
-	font-size: 12px;
-	line-height: 20px;
-}
 .login-box {
 	width: 100%;
 	height: 100%;
@@ -205,6 +196,16 @@ input[type='password']::placeholder {
 		justify-content: space-between;
 		box-sizing: border-box;
 		position: relative;
+
+		.input-wrap {
+			width: 100%;
+			height: 20px;
+			overflow: hidden;
+			display: flex;
+			align-items: center;
+			justify-content: flex-start;
+		}
+
 		.cursor-pointer {
 			color: #ffffff;
 		}
@@ -224,12 +225,24 @@ input[type='password']::placeholder {
 			border: none;
 			padding: 0;
 			margin: 0;
+			text-transform: uppercase;
+			font-size: 28px;
+			caret-color: #ffffff;
+			letter-spacing: 1px;
+			height: 28px;
+			line-height: 28px;
+			font-weight: 900;
+
 			&.disable {
 				pointer-events: none;
 			}
 			&:focus {
 				outline: none;
 				box-shadow: none;
+			}
+			&::placeholder {
+				font-size: 12px;
+				line-height: 20px;
 			}
 		}
 	}

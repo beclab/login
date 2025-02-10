@@ -1,16 +1,19 @@
 <template>
 	<div class="item-margin" :class="passwordErr ? 'shake' : ''">
-		<input
-			class="text-white"
-			:class="loading ? 'disable' : ''"
-			type="password"
-			id="password"
-			v-model="password"
-			ref="passwordInput"
-			:disabled="loading"
-			@keydown="onkeydown"
-			@update:model-value="updateInput"
-		/>
+		<div class="input-wrap">
+			<input
+				class="text-white"
+				:class="loading ? 'disable' : ''"
+				type="password"
+				id="password"
+				v-model="password"
+				ref="passwordInput"
+				:disabled="loading"
+				@keydown="onkeydown"
+				@update:model-value="updateInput"
+			/>
+		</div>
+
 		<label v-if="!password" class="placeholder-label">{{
 			t('login_hint_password')
 		}}</label>
@@ -86,6 +89,16 @@ defineExpose({
 	justify-content: space-between;
 	box-sizing: border-box;
 	position: relative;
+
+	.input-wrap {
+		width: 100%;
+		height: 18px;
+		overflow: hidden;
+		display: flex;
+		align-items: center;
+		justify-content: flex-start;
+	}
+
 	.cursor-pointer {
 		color: #ffffff;
 	}
@@ -110,6 +123,10 @@ defineExpose({
 		font-size: 20px !important;
 		caret-color: #ffffff;
 		letter-spacing: 2px;
+		text-transform: uppercase;
+		caret-color: #ffffff;
+		font-weight: 900;
+
 		&.disable {
 			pointer-events: none;
 		}

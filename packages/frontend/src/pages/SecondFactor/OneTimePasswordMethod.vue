@@ -145,19 +145,20 @@ defineExpose({
 }
 
 .mobile-size {
-	width: 46px;
-	height: 68px;
+	width: 44px;
+	height: 54px;
+	font-size: 23px;
 }
 
 .pc-size {
 	width: 32px;
 	height: 40px;
+	font-size: 20px;
 }
 
 .otp-input {
 	line-height: 40px;
 	margin: 0 4px;
-	font-size: 23px;
 	font-weight: 600;
 	text-align: center;
 	border: none;

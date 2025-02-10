@@ -135,6 +135,9 @@ const onkeydown = async (e: any) => {
 </script>
 
 <style lang="scss" scoped>
+input[type='password']::-ms-reveal {
+	display: none;
+}
 .login-box {
 	width: 100%;
 	height: 100%;
@@ -199,7 +202,7 @@ const onkeydown = async (e: any) => {
 
 		.input-wrap {
 			width: 100%;
-			height: 20px;
+			height: 18px;
 			overflow: hidden;
 			display: flex;
 			align-items: center;
@@ -226,7 +229,7 @@ const onkeydown = async (e: any) => {
 			padding: 0;
 			margin: 0;
 			text-transform: uppercase;
-			font-size: 28px;
+			font-size: 22px;
 			caret-color: #ffffff;
 			letter-spacing: 1px;
 			height: 28px;

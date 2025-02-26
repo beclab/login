@@ -3,12 +3,13 @@
 </template>
 
 <script>
-import { defineComponent, onMounted } from 'vue';
+import { defineComponent, onMounted, onUnmounted, ref } from 'vue';
 import { useTokenStore } from './stores/token';
-import { CurrentView } from 'src/constants/index';
+import { CurrentView } from 'src/utils/constants';
 import { supportLanguages } from './i18n';
 import { i18n } from './boot/i18n';
 import queryString from 'query-string';
+import { useMobile, onMobileChange } from '@bytetrade/core';
 
 export default defineComponent({
 	name: 'App',
@@ -22,7 +23,7 @@ export default defineComponent({
 			host = window.location.origin;
 		}
 
-		tokenStore.currentView = CurrentView.FIRSTLOGIN;
+		tokenStore.currentView = CurrentView.FIRST_FACTOR;
 		tokenStore.setUrl(host);
 		tokenStore.setUrlParams();
 
@@ -32,11 +33,16 @@ export default defineComponent({
 			if (fa2 === 'true') {
 				redirect({ path: '/' });
 			}
-			//
 		});
 	},
 	setup() {
 		const tokenStore = useTokenStore();
+		const { state, cleanup } = useMobile();
+		tokenStore.deviceInfo = state;
+
+		onMobileChange((state) => {
+			tokenStore.deviceInfo = state;
+		});
 
 		onMounted(async () => {
 			const host = window.location.origin;
@@ -52,6 +58,10 @@ export default defineComponent({
 					window.location.replace(currentUrl);
 				}
 			}
+		});
+
+		onUnmounted(() => {
+			cleanup();
 		});
 
 		let terminusLanguage = '';

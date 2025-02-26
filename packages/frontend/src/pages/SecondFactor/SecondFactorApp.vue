@@ -8,8 +8,8 @@
 		<q-card class="factor-card row items-center justify-center">
 			<OneTimePasswordMethod
 				ref="onetimeRef"
-				:digits="infitotp.digits"
-				:period="infitotp.period"
+				:digits="optConfig.digits"
+				:period="optConfig.period"
 				@handleOnComplete="handleOnComplete"
 			/>
 
@@ -44,8 +44,8 @@ export default defineComponent({
 	},
 	setup() {
 		const tokenStore = useTokenStore();
-		const userinfo = ref();
-		const infitotp = ref({
+		const userInfo = ref();
+		const optConfig = ref({
 			digits: 6,
 			period: 30
 		});
@@ -64,7 +64,7 @@ export default defineComponent({
 			Loading.show();
 
 			try {
-				const data: Token = await tokenStore.cert_secondfactor_totp(
+				const data: Token = await tokenStore.secondFactor(
 					oneTimePasswordMethod.value
 				);
 				if (data.redirect) {
@@ -117,13 +117,13 @@ export default defineComponent({
 		});
 
 		return {
-			userinfo,
-			infitotp,
+			userInfo,
+			optConfig,
 			passwordErr,
+			tokenStore,
 			onLogin,
 			handleOnComplete,
-			handleClearInput,
-			tokenStore
+			handleClearInput
 		};
 	}
 });
@@ -148,43 +148,11 @@ export default defineComponent({
 		top: 0;
 		bottom: 0;
 	}
-
 	.factor-card {
 		width: 480px;
 		padding: 20px;
 		box-shadow: none;
 		background: none;
-
-		.user-info {
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-			justify-content: center;
-			.avator {
-				border-radius: 40px;
-			}
-			span {
-				line-height: 40px;
-				font-weight: bolder;
-				font-size: 18px;
-			}
-		}
-
-		.logout {
-			div {
-				width: 100px;
-				color: red;
-				cursor: pointer;
-				&:first-child {
-					text-align: end;
-					padding-right: 10px;
-				}
-				&:last-child {
-					padding-left: 10px;
-				}
-			}
-		}
-
 		.login-btn {
 			width: 120px;
 			height: 48px;
@@ -197,26 +165,6 @@ export default defineComponent({
 			box-shadow: 0px 2px 12px 0px rgba(0, 0, 0, 0.2);
 			opacity: 1;
 			border-radius: 8px;
-		}
-
-		.errShock {
-			animation-delay: 0s;
-			animation-name: shock;
-			animation-duration: 0.1s;
-			animation-iteration-count: 3;
-			animation-direction: normal;
-			animation-timing-function: linear;
-		}
-
-		@keyframes shock {
-			0% {
-				margin-left: 0px;
-				margin-right: 5px;
-			}
-			100% {
-				margin-left: 5px;
-				margin-right: 0px;
-			}
 		}
 	}
 }

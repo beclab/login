@@ -8,3 +8,6 @@ dist/
 .lintcache
 .eslintcache
 data/
+fonttools/*
+build/*
+packages/frontend/src/assets/fonts/MaterialSymbolsRounded.woff2

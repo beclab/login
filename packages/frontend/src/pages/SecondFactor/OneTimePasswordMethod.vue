@@ -3,11 +3,11 @@
 		<div class="column items-center justify-center">
 			<div
 				class="iconContainer"
-				:style="{ width: size + 'px', height: size + 'px' }"
+				:style="{ width: circularSize + 'px', height: circularSize + 'px' }"
 			>
 				<q-circular-progress
-					:value="progressPeriod"
-					:size="`${size}px`"
+					:value="progress"
+					:size="`${circularSize}px`"
 					:thickness="1"
 					color="white"
 					class="q-ma-md"
@@ -15,17 +15,22 @@
 				/>
 			</div>
 
-			<div class="secend-title q-mb-sm">{{ t('totp_title') }}</div>
-			<div class="secend-desc">
-				{{ t('totp_message') }}
+			<div class="second-title q-mb-sm">
+				{{ t('otp_title') }}
+			</div>
+			<div class="second-desc">
+				{{ t('otp_message') }}
 			</div>
 
 			<OtpInput
 				:class="passwordErr ? 'shake' : ''"
 				ref="otpInputRef"
-				:inputClasses="['otp-input', isMobile ? 'mobile-size' : 'pc-size']"
+				:inputClasses="[
+					'otp-input',
+					tokenStore.deviceInfo.isMobile ? 'mobile-size' : 'pc-size'
+				]"
 				separator=""
-				:num-inputs="6"
+				:num-inputs="digits"
 				:should-auto-focus="true"
 				:is-input-num="true"
 				:conditionalClass="['one', 'two', 'three', 'four', 'five', 'six']"
@@ -36,10 +41,10 @@
 	</div>
 </template>
 <script lang="ts" setup>
-import { ref, onMounted, defineExpose } from 'vue';
+import { ref, onMounted, onUnmounted, defineExpose } from 'vue';
 import OtpInput from 'vue3-otp-input';
 import { useI18n } from 'vue-i18n';
-import { isMobile } from '../../utils/platform';
+import { useTokenStore } from '../../stores/token';
 
 const props = defineProps({
 	digits: {
@@ -56,21 +61,15 @@ const props = defineProps({
 		type: Boolean,
 		required: false,
 		default: false
-	},
-	size: {
-		type: Number,
-		required: false,
-		default: 100
 	}
 });
 
 const emits = defineEmits(['handleOnComplete']);
+const tokenStore = useTokenStore();
 
 const { t } = useI18n();
 const otpInputRef = ref();
-const currentPeriod = ref(0);
-const progressPeriod = ref(0);
-const currentSecond = ref(0);
+const circularSize = ref(tokenStore.deviceInfo.isMobile ? 80 : 100);
 
 const handleOnChange = () => {
 	console.log('handleOnChange');
@@ -84,35 +83,34 @@ const clearInput = () => {
 	otpInputRef.value.clearInput();
 };
 
-const initSecond = () => {
-	currentSecond.value = new Date().getSeconds();
-	currentPeriod.value =
-		currentSecond.value > 30
-			? Math.round(currentSecond.value / 2)
-			: currentSecond.value;
+const timer = ref(0);
+const progress = ref(0);
+
+const updateTimer = async (updInt = 2000) => {
+	window.clearTimeout(timer.value);
+	progress.value = (((Date.now() / 1000) % props.period) / props.period) * 100;
+
+	if (updInt) {
+		timer.value = window.setTimeout(() => updateTimer(updInt), updInt);
+	}
 };
 
 onMounted(() => {
-	initSecond();
+	updateTimer();
+});
 
-	window.setInterval(() => {
-		currentPeriod.value = currentPeriod.value + 1;
-		if (currentPeriod.value >= props.period) {
-			currentPeriod.value = 0;
-		}
-		progressPeriod.value = (currentPeriod.value * 100) / props.period;
-	}, 1000);
+onUnmounted(() => {
+	if (timer.value) {
+		clearInterval(timer.value);
+	}
 });
 
 defineExpose({
-	clearInput,
-	currentPeriod
+	clearInput
 });
 </script>
 <style lang="scss">
 .security {
-	margin-top: 20px;
-	padding: 20px 0 32px;
 	border-radius: 14px;
 	.information-icon {
 		border-radius: 60px;
@@ -131,13 +129,13 @@ defineExpose({
 	margin-bottom: 30px;
 }
 
-.secend-title {
+.second-title {
 	font-weight: 600;
 	font-size: 24px;
 	line-height: 32px;
 	color: #ffffff;
 }
-.secend-desc {
+.second-desc {
 	font-size: 14px;
 	font-weight: 400;
 	color: #ffffff;

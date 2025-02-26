@@ -1,22 +1,24 @@
 <template>
 	<div class="login-box">
 		<q-card class="login-card">
-			<q-card-section class="column q-py-xl">
-				<div class="avator">
-					<div :style="{ width: '124px', height: '124px' }">
-						<img
-							:src="tokenStore.avatar_url"
-							style="width: 100%; height: 100%"
-						/>
-					</div>
+			<q-card-section class="column">
+				<div
+					class="avatar"
+					:style="{
+						width: `${avatarSize}px`,
+						height: `${avatarSize}px`,
+						borderRadius: `${avatarSize / 2}px`
+					}"
+				>
+					<TerminusAvatar :info="tokenStore.user" :size="avatarSize" />
 				</div>
 
 				<p class="login-name">{{ t('mobile_veri') }}</p>
-				<p class="login-conter" @click="toSecondFactor">
-					{{ t('login_useing_auth') }}
+				<p class="login-hint" @click="toSecondFactor">
+					{{ t('login_using_auth') }}
 				</p>
 
-				<div class="refush row items-center justify-center" v-if="loading">
+				<div class="refresh row items-center justify-center" v-if="loading">
 					<q-img
 						src="src/assets/progress_activity.svg"
 						spinner-color="white"
@@ -31,14 +33,15 @@
 import { ref, onMounted, onUnmounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useTokenStore } from 'src/stores/token';
-import { CurrentView } from 'src/constants/index';
+import { CurrentView } from 'src/utils/constants';
 
 const { t } = useI18n();
 const tokenStore = useTokenStore();
 const loading = ref(false);
+const avatarSize = ref(tokenStore.deviceInfo.isMobile ? 100 : 124);
 
 const toSecondFactor = () => {
-	tokenStore.currentView = CurrentView.SECONDFACTORFORM;
+	tokenStore.currentView = CurrentView.SECOND_FACTOR;
 };
 
 let interval: any = null;
@@ -113,17 +116,15 @@ onUnmounted(() => {
 	align-items: center;
 
 	.login-card {
-		margin: 0 auto 20vh;
+		height: 300px;
+		margin: 0 auto 10vh;
 		background-color: transparent;
 		box-shadow: none;
 		.column {
 			display: flex;
 			justify-content: center;
 			align-items: center;
-			.avator {
-				width: 124px;
-				height: 124px;
-				border-radius: 62px;
+			.avatar {
 				overflow: hidden;
 			}
 			.login-name {
@@ -134,7 +135,7 @@ onUnmounted(() => {
 				margin-top: 50px;
 				margin-bottom: 4px;
 			}
-			.login-conter {
+			.login-hint {
 				font-size: 14px;
 				font-family: Roboto-Regular, Roboto;
 				font-weight: 400;
@@ -184,7 +185,7 @@ onUnmounted(() => {
 	height: 0px;
 }
 
-.refush {
+.refresh {
 	width: 32px;
 	height: 32px;
 	border-radius: 16px;

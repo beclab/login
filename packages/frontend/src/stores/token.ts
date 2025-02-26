@@ -1,28 +1,21 @@
 import axios from 'axios';
 import { defineStore } from 'pinia';
 import queryString from 'query-string';
-import { Token } from '@bytetrade/core';
-import { Encoder } from '../utils/encoder';
-import { CurrentView } from 'src/constants/index';
-import { RootState } from 'src/types/index';
+import { Token, TerminusInfo } from '@bytetrade/core';
+import { CurrentView } from 'src/utils/constants';
 
-function stringToIntHash(str: string, lowerbound: number, upperbound: number) {
-	if (!str) {
-		return lowerbound;
-	}
-
-	let result = 0;
-	for (let i = 0; i < str.length; i++) {
-		result = result + str.charCodeAt(i);
-	}
-
-	if (!lowerbound) lowerbound = 0;
-	if (!upperbound) upperbound = 500;
-
-	return (result % (upperbound - lowerbound)) + lowerbound;
-}
-
-const useGlobalCDN = false;
+export type RootState = {
+	token: Token | null;
+	url: string | null;
+	user: TerminusInfo;
+	urlParams: any;
+	currentView: string;
+	requestTermiPass: boolean;
+	deviceInfo: {
+		isMobile: boolean;
+		isVerticalScreen: boolean;
+	};
+};
 
 export const useTokenStore = defineStore('token', {
 	state: () => {
@@ -31,8 +24,12 @@ export const useTokenStore = defineStore('token', {
 			url: null,
 			user: {},
 			urlParams: {},
-			currentView: CurrentView.FIRSTLOGIN,
-			requestTermiPass: true
+			currentView: CurrentView.FIRST_FACTOR,
+			requestTermiPass: true,
+			deviceInfo: {
+				isMobile: false,
+				isVerticalScreen: false
+			}
 		} as RootState;
 	},
 	getters: {
@@ -48,67 +45,6 @@ export const useTokenStore = defineStore('token', {
 				? decodeURIComponent(this.urlParams.rd)
 				: desktopURL;
 			return targetURL;
-		},
-		avatar_url(): string {
-			if (!this.user || !this.user.terminusName) {
-				return 'https://file.bttcdn.com/avatar3/1.png';
-			}
-
-			if (!this.user.avatar) {
-				const id = stringToIntHash(this.user.terminusName, 1, 36);
-				if (useGlobalCDN) {
-					return `https://file.bttcdn.com/avatar3/${id}.png`;
-				} else {
-					return (
-						'https://' +
-						this.user.terminusName.replace('@', '.') +
-						`/avatar/${id}.png`
-					);
-				}
-			}
-
-			if (this.user.avatar.startsWith('http')) {
-				return this.user.avatar;
-			} else {
-				const re = new RegExp('^[1-3]?[0-9]\\.png');
-				if (re.test(this.user.avatar)) {
-					if (useGlobalCDN) {
-						return 'https://file.bttcdn.com/avatar3/' + this.user.avatar;
-					} else {
-						return (
-							'https://' +
-							this.user.terminusName.replace('@', '.') +
-							'/avatar/' +
-							this.user.avatar
-						);
-					}
-				} else {
-					try {
-						const vp = JSON.parse(this.user.avatar);
-						if (vp) {
-							const vcstr = Encoder.bytesToString(
-								Encoder.base64UrlToBytes(
-									vp.verifiableCredential![0].split('.')[1]
-								)
-							);
-							const vc = JSON.parse(vcstr);
-							let imageUrl = vc.vc.credentialSubject.image;
-							if (imageUrl.startsWith('ipfs://')) {
-								imageUrl = imageUrl.replace(
-									'ipfs://',
-									'https://gateway.ipfs.io/ipfs/'
-								);
-							}
-
-							return imageUrl;
-						} else {
-							return 'https://file.bttcdn.com/avatar3/1.png';
-						}
-					} catch (e) {
-						return 'https://file.bttcdn.com/avatar3/1.png';
-					}
-				}
-			}
 		}
 	},
 	actions: {
@@ -155,7 +91,7 @@ export const useTokenStore = defineStore('token', {
 			this.url = new_url;
 		},
 
-		async cert_secondfactor_totp(token: string): Promise<Token> {
+		async secondFactor(token: string): Promise<Token> {
 			const data: Token = await axios.post(
 				this.url + '/api/secondfactor/totp',
 				{

@@ -2,47 +2,33 @@
 	<div class="bg-container">
 		<img fit="fill" class="desktop-bg" :src="tokenStore.user.loginBackground" />
 	</div>
-
 	<transition appear leave-active-class="animated fadeOut">
 		<component :is="currentComponent"></component>
 	</transition>
 </template>
-<script lang="ts">
-import { defineComponent, computed } from 'vue';
+<script lang="ts" setup>
+import { computed } from 'vue';
 import { useTokenStore } from './../stores/token';
-import SecondFactorForm from './SecondFactor/SecondFactorForm.vue';
-import FirstLogin from './FirstLogin.vue';
+import { CurrentView } from './../utils/constants';
+import SecondFactor from './SecondFactor/SecondFactorForm.vue';
+import FirstFactor from './FirstFactor.vue';
 import MobileVerification from './MobileVerification.vue';
-import FirstLoginMobile from './mobile/FirstLogin.vue';
-import MobileVerificationMobile from './mobile/MobileVerification.vue';
-import SecondFactorFormMobile from './SecondFactor/SecondFactorFormMobile.vue';
 
-import { isMobile } from './../utils/platform';
+const tokenStore = useTokenStore();
 
-export default defineComponent({
-	components: {
-		SecondFactorForm,
-		FirstLogin,
-		MobileVerification,
-		FirstLoginMobile,
-		MobileVerificationMobile,
-		SecondFactorFormMobile
-	},
-	setup() {
-		const tokenStore = useTokenStore();
+const currentComponent = computed(() => {
+	switch (tokenStore.currentView) {
+		case CurrentView.FIRST_FACTOR:
+			return FirstFactor;
 
-		const currentComponent = computed(() => {
-			if (isMobile.value) {
-				return `${tokenStore.currentView}Mobile`;
-			}
+		case CurrentView.SECOND_FACTOR:
+			return SecondFactor;
 
-			return tokenStore.currentView;
-		});
+		case CurrentView.MOBILE_VERIFICATION:
+			return MobileVerification;
 
-		return {
-			tokenStore,
-			currentComponent
-		};
+		default:
+			return FirstFactor;
 	}
 });
 </script>

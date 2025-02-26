@@ -1,17 +1,19 @@
 <template>
 	<div class="login-box">
 		<q-card class="login-card">
-			<q-card-section class="column q-py-xl">
-				<div class="avator">
-					<div :style="{ width: '124px', height: '124px' }">
-						<img
-							:src="tokenStore.avatar_url"
-							style="width: 100%; height: 100%"
-						/>
-					</div>
+			<q-card-section class="column">
+				<div
+					class="avatar"
+					:style="{
+						width: `${avatarSize}px`,
+						height: `${avatarSize}px`,
+						borderRadius: `${avatarSize / 2}px`
+					}"
+				>
+					<TerminusAvatar :info="tokenStore.user" :size="avatarSize" />
 				</div>
 				<p class="login-name">{{ username }}</p>
-				<p class="login-conter">
+				<p class="login-hint">
 					{{ t('login_title') }}
 				</p>
 				<div class="item-margin" :class="passwordErr ? 'shake' : ''">
@@ -21,31 +23,30 @@
 							:class="loading ? 'disable' : ''"
 							type="password"
 							id="password"
-							v-model="pwd"
+							v-model="password"
 							ref="loginRef"
 							:disabled="loading"
 							@keydown="onkeydown"
 						/>
 					</div>
 
-					<label v-if="!pwd" class="placeholder-label">{{
+					<label v-if="!password" class="placeholder-label">{{
 						t('login_hint_password')
 					}}</label>
 					<q-icon
-						v-if="pwd"
+						v-if="password && !tokenStore.deviceInfo.isMobile"
 						class="cursor-pointer animated fadeIn"
 						name="sym_r_arrow_circle_right"
 						@click="onLogin"
 						size="20px"
 					/>
 				</div>
-				<div class="refush row items-center justify-center" v-if="loading">
-					<q-img
-						src="../assets/progress_activity.svg"
-						spinner-color="white"
-						style="width: 18px; height: 18px"
-					/>
-				</div>
+
+				<login-action
+					:password="password"
+					:loading="loading"
+					@on-login="onLogin"
+				/>
 			</q-card-section>
 		</q-card>
 	</div>
@@ -54,12 +55,13 @@
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useTokenStore } from 'src/stores/token';
-import { CurrentView } from 'src/constants/index';
+import { CurrentView } from 'src/utils/constants';
 import { BtNotify, NotifyDefinedType } from '@bytetrade/ui';
+import LoginAction from './../components/LoginAction.vue';
 
 const { t } = useI18n();
 const tokenStore = useTokenStore();
-const pwd = ref();
+const password = ref();
 const loginRef = ref();
 const loading = ref(false);
 const passwordErr = ref(false);
@@ -69,21 +71,21 @@ const username =
 		0,
 		tokenStore.user.terminusName.indexOf('@')
 	);
+const avatarSize = ref(tokenStore.deviceInfo.isMobile ? 100 : 124);
 
 const onLogin = async () => {
 	loading.value = true;
 	try {
-		const firstfactor = await tokenStore.login(
+		const res = await tokenStore.login(
 			tokenStore.user.terminusName.split('@')[0],
-			pwd.value
+			password.value
 		);
 
-		if (firstfactor.fa2) {
-			// redirect('/secondFactorForm');
-			tokenStore.currentView = CurrentView.MOBILEVERIFICATION;
+		if (res.fa2) {
+			tokenStore.currentView = CurrentView.MOBILE_VERIFICATION;
 		} else {
-			if (firstfactor.redirect) {
-				window.location.replace(firstfactor.redirect);
+			if (res.redirect) {
+				window.location.replace(res.redirect);
 			} else {
 				if (typeof window !== 'undefined') {
 					window.location.replace(
@@ -95,14 +97,13 @@ const onLogin = async () => {
 			}
 		}
 	} catch (err) {
-		console.log('eeee', err.response.data);
 		BtNotify.show({
 			type: NotifyDefinedType.MESSAGE,
 			message: err.response.data.message
 		});
 
-		await shakeInput();
-		await handleClearInput();
+		shakeInput();
+		handleClearInput();
 	} finally {
 		loading.value = false;
 	}
@@ -125,9 +126,9 @@ const shakeInput = () => {
 
 const onkeydown = async (e: any) => {
 	if (e.keyCode !== 13) return false;
-	if (e.keyCode === 13 && !pwd.value) {
-		await shakeInput();
-		await handleClearInput();
+	if (e.keyCode === 13 && !password.value) {
+		shakeInput();
+		handleClearInput();
 	}
 
 	onLogin();
@@ -151,18 +152,15 @@ input[type='password']::-ms-reveal {
 	align-items: center;
 
 	.login-card {
-		width: 500px;
-		margin: 0 auto 20vh;
+		height: 300px;
+		margin: 0 auto 10vh;
 		background-color: transparent;
 		box-shadow: none;
 		.column {
 			display: flex;
 			justify-content: center;
 			align-items: center;
-			.avator {
-				width: 124px;
-				height: 124px;
-				border-radius: 62px;
+			.avatar {
 				overflow: hidden;
 			}
 			.login-name {
@@ -173,7 +171,7 @@ input[type='password']::-ms-reveal {
 				margin-top: 16px;
 				margin-bottom: 4px;
 			}
-			.login-conter {
+			.login-hint {
 				font-size: 14px;
 				font-family: Roboto-Regular, Roboto;
 				font-weight: 400;
@@ -191,7 +189,6 @@ input[type='password']::-ms-reveal {
 		background: rgba(255, 255, 255, 0.4);
 		border-radius: 8px;
 		backdrop-filter: blur(20px);
-		// font-size: 12px;
 		padding-left: 12px;
 		padding-right: 10px;
 		display: flex;
@@ -268,29 +265,5 @@ input[type='password']::-ms-reveal {
 }
 :global(.q-field--standard .q-field__control:after) {
 	height: 0px;
-}
-
-.refush {
-	width: 32px;
-	height: 32px;
-	border-radius: 16px;
-	background: rgba(31, 24, 20, 0.3);
-	margin: 0 auto;
-	animation: rotate 1s linear infinite;
-	position: absolute;
-	left: 0;
-	right: 0;
-	bottom: -10px;
-	margin: auto;
-	overflow: hidden;
-}
-
-@keyframes rotate {
-	0% {
-		transform: rotate(0deg);
-	}
-	100% {
-		transform: rotate(360deg);
-	}
 }
 </style>

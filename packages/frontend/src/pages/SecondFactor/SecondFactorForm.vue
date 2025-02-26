@@ -1,21 +1,23 @@
 <template>
-	<div class="factor-box">
-		<q-card class="factor-card colnum items-center justify-center">
-			<OneTimePasswordMethod
-				ref="onetimeRef"
-				:passwordErr="passwordErr"
-				:digits="infitotp.digits"
-				:period="infitotp.period"
-				@handleOnComplete="handleOnComplete"
-			/>
-
-			<div class="refush row items-center justify-center" v-if="loading">
-				<q-img
-					src="../../assets/progress_activity.svg"
-					spinner-color="white"
-					style="width: 18px; height: 18px"
+	<div class="login-box">
+		<q-card class="login-card">
+			<q-card-section class="column">
+				<OneTimePasswordMethod
+					ref="onetimeRef"
+					:passwordErr="passwordErr"
+					:digits="optConfig.digits"
+					:period="optConfig.period"
+					@handleOnComplete="handleOnComplete"
 				/>
-			</div>
+
+				<div class="refresh row items-center justify-center" v-if="loading">
+					<q-img
+						src="../../assets/progress_activity.svg"
+						spinner-color="white"
+						style="width: 18px; height: 18px"
+					/>
+				</div>
+			</q-card-section>
 		</q-card>
 	</div>
 </template>
@@ -38,8 +40,8 @@ export default defineComponent({
 	},
 	setup() {
 		const tokenStore = useTokenStore();
-		const userinfo = ref();
-		const infitotp = ref({
+		const userInfo = ref();
+		const optConfig = ref({
 			digits: 6,
 			period: 30
 		});
@@ -57,7 +59,7 @@ export default defineComponent({
 		const onLogin = async () => {
 			loading.value = true;
 			try {
-				const data: Token = await tokenStore.cert_secondfactor_totp(
+				const data: Token = await tokenStore.secondFactor(
 					oneTimePasswordMethod.value
 				);
 
@@ -91,121 +93,63 @@ export default defineComponent({
 		});
 
 		return {
-			userinfo,
-			infitotp,
+			userInfo,
+			optConfig,
 			passwordErr,
 			loading,
+			tokenStore,
 			onLogin,
 			handleOnComplete,
-			handleClearInput,
-			tokenStore
+			handleClearInput
 		};
 	}
 });
 </script>
 <style lang="scss" scoped>
-.factor-box {
-	width: 100vw;
-	height: 100vh;
-	display: flex;
-	align-items: center;
-	justify-content: center;
+.login-box {
+	width: 100%;
+	height: 100%;
 	background-position: center;
 	background-repeat: no-repeat;
 	background-size: 100% 100%;
+	position: fixed;
+	top: 0px;
+	left: 0;
+	display: flex;
+	align-items: center;
 
-	.factor-card {
-		width: 480px;
-		padding: 20px;
-		margin-bottom: 20vh;
+	.login-card {
+		height: 300px;
+		margin: 0 auto 10vh;
+		background-color: transparent;
 		box-shadow: none;
-		background: none;
-
-		.user-info {
+		.column {
 			display: flex;
-			flex-direction: column;
-			align-items: center;
 			justify-content: center;
-			.avator {
-				border-radius: 40px;
-			}
-			span {
-				line-height: 40px;
-				font-weight: bolder;
-				font-size: 18px;
-			}
-		}
+			align-items: center;
 
-		.logout {
-			div {
-				width: 100px;
-				color: red;
-				cursor: pointer;
-				&:first-child {
-					text-align: end;
-					padding-right: 10px;
+			.refresh {
+				width: 32px;
+				height: 32px;
+				border-radius: 16px;
+				background: rgba(31, 24, 20, 0.3);
+				margin: 0 auto;
+				animation: rotate 1s linear infinite;
+				position: absolute;
+				left: 0;
+				right: 0;
+				bottom: -40px;
+				margin: auto;
+				overflow: hidden;
+			}
+
+			@keyframes rotate {
+				0% {
+					transform: rotate(0deg);
 				}
-				&:last-child {
-					padding-left: 10px;
+				100% {
+					transform: rotate(360deg);
 				}
-			}
-		}
-
-		.login-btn {
-			width: 120px;
-			height: 48px;
-			line-height: 48px;
-			text-align: center;
-			font-size: 16px;
-			font-weight: 500;
-			color: #242424;
-			background: #ffffff;
-			box-shadow: 0px 2px 12px 0px rgba(0, 0, 0, 0.2);
-			opacity: 1;
-			border-radius: 8px;
-		}
-
-		.errShock {
-			animation-delay: 0s;
-			animation-name: shock;
-			animation-duration: 0.1s;
-			animation-iteration-count: 3;
-			animation-direction: normal;
-			animation-timing-function: linear;
-		}
-
-		@keyframes shock {
-			0% {
-				margin-left: 0px;
-				margin-right: 5px;
-			}
-			100% {
-				margin-left: 5px;
-				margin-right: 0px;
-			}
-		}
-
-		.refush {
-			width: 32px;
-			height: 32px;
-			border-radius: 16px;
-			background: rgba(31, 24, 20, 0.3);
-			margin: 0 auto;
-			animation: rotate 1s linear infinite;
-			position: absolute;
-			left: 0;
-			right: 0;
-			bottom: -10px;
-			margin: auto;
-			overflow: hidden;
-		}
-
-		@keyframes rotate {
-			0% {
-				transform: rotate(0deg);
-			}
-			100% {
-				transform: rotate(360deg);
 			}
 		}
 	}

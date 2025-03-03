@@ -34,7 +34,9 @@
 						t('login_hint_password')
 					}}</label>
 					<q-icon
-						v-if="password && !tokenStore.deviceInfo.isMobile"
+						v-if="
+							password && tokenStore.deviceInfo.device !== DeviceType.MOBILE
+						"
 						class="cursor-pointer animated fadeIn"
 						name="sym_r_arrow_circle_right"
 						@click="onLogin"
@@ -56,6 +58,7 @@ import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useTokenStore } from 'src/stores/token';
 import { CurrentView } from 'src/utils/constants';
+import { DeviceType } from '@bytetrade/core';
 import { BtNotify, NotifyDefinedType } from '@bytetrade/ui';
 import LoginAction from './../components/LoginAction.vue';
 
@@ -71,7 +74,7 @@ const username =
 		0,
 		tokenStore.user.terminusName.indexOf('@')
 	);
-const avatarSize = ref(tokenStore.deviceInfo.isMobile ? 100 : 124);
+const avatarSize = ref(tokenStore.deviceInfo.device.MOBILE ? 100 : 124);
 
 const onLogin = async () => {
 	loading.value = true;

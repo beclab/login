@@ -1,5 +1,5 @@
 <template>
-	<template v-if="tokenStore.deviceInfo.isMobile">
+	<template v-if="tokenStore.deviceInfo.device === DeviceType.MOBILE">
 		<div
 			class="login row items-center justify-center"
 			v-if="!loading && password"
@@ -32,6 +32,7 @@
 </template>
 <script lang="ts" setup>
 import { useTokenStore } from 'src/stores/token';
+import { DeviceType } from '@bytetrade/core';
 
 defineProps({
 	password: {

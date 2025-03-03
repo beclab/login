@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { defineStore } from 'pinia';
 import queryString from 'query-string';
-import { Token, TerminusInfo } from '@bytetrade/core';
+import { Token, TerminusInfo, DeviceType } from '@bytetrade/core';
 import { CurrentView } from 'src/utils/constants';
 
 export type RootState = {
@@ -12,7 +12,7 @@ export type RootState = {
 	currentView: string;
 	requestTermiPass: boolean;
 	deviceInfo: {
-		isMobile: boolean;
+		device: DeviceType;
 		isVerticalScreen: boolean;
 	};
 };
@@ -27,7 +27,7 @@ export const useTokenStore = defineStore('token', {
 			currentView: CurrentView.FIRST_FACTOR,
 			requestTermiPass: true,
 			deviceInfo: {
-				isMobile: false,
+				device: DeviceType.DESKTOP,
 				isVerticalScreen: false
 			}
 		} as RootState;

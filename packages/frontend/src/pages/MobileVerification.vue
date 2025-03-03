@@ -32,13 +32,16 @@
 <script lang="ts" setup>
 import { ref, onMounted, onUnmounted } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { DeviceType } from '@bytetrade/core';
 import { useTokenStore } from 'src/stores/token';
 import { CurrentView } from 'src/utils/constants';
 
 const { t } = useI18n();
 const tokenStore = useTokenStore();
 const loading = ref(false);
-const avatarSize = ref(tokenStore.deviceInfo.isMobile ? 100 : 124);
+const avatarSize = ref(
+	tokenStore.deviceInfo.device === DeviceType.MOBILE ? 100 : 124
+);
 
 const toSecondFactor = () => {
 	tokenStore.currentView = CurrentView.SECOND_FACTOR;

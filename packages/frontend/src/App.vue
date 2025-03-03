@@ -3,13 +3,13 @@
 </template>
 
 <script>
-import { defineComponent, onMounted, onUnmounted, ref } from 'vue';
+import { defineComponent, onMounted, onUnmounted } from 'vue';
 import { useTokenStore } from './stores/token';
 import { CurrentView } from 'src/utils/constants';
 import { supportLanguages } from './i18n';
 import { i18n } from './boot/i18n';
 import queryString from 'query-string';
-import { useMobile, onMobileChange } from '@bytetrade/core';
+import { useDevice, onDeviceChange } from '@bytetrade/core';
 
 export default defineComponent({
 	name: 'App',
@@ -37,10 +37,10 @@ export default defineComponent({
 	},
 	setup() {
 		const tokenStore = useTokenStore();
-		const { state, cleanup } = useMobile();
+		const { state, cleanup } = useDevice();
 		tokenStore.deviceInfo = state;
 
-		onMobileChange((state) => {
+		onDeviceChange((state) => {
 			tokenStore.deviceInfo = state;
 		});
 

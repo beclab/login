@@ -27,7 +27,9 @@
 				ref="otpInputRef"
 				:inputClasses="[
 					'otp-input',
-					tokenStore.deviceInfo.isMobile ? 'mobile-size' : 'pc-size'
+					tokenStore.deviceInfo.device === DeviceType.MOBILE
+						? 'mobile-size'
+						: 'pc-size'
 				]"
 				separator=""
 				:num-inputs="digits"
@@ -45,6 +47,7 @@ import { ref, onMounted, onUnmounted, defineExpose } from 'vue';
 import OtpInput from 'vue3-otp-input';
 import { useI18n } from 'vue-i18n';
 import { useTokenStore } from '../../stores/token';
+import { DeviceType } from '@bytetrade/core';
 
 const props = defineProps({
 	digits: {
@@ -69,7 +72,9 @@ const tokenStore = useTokenStore();
 
 const { t } = useI18n();
 const otpInputRef = ref();
-const circularSize = ref(tokenStore.deviceInfo.isMobile ? 80 : 100);
+const circularSize = ref(
+	tokenStore.deviceInfo.device === DeviceType.MOBILE ? 80 : 100
+);
 
 const handleOnChange = () => {
 	console.log('handleOnChange');

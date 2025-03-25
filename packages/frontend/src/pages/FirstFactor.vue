@@ -27,6 +27,7 @@
 							ref="loginRef"
 							:disabled="loading"
 							@keydown="onkeydown"
+							:style="{ fontSize: inputFontSize }"
 						/>
 					</div>
 
@@ -74,7 +75,12 @@ const username =
 		0,
 		tokenStore.user.terminusName.indexOf('@')
 	);
-const avatarSize = ref(tokenStore.deviceInfo.device.MOBILE ? 100 : 124);
+const avatarSize = ref(
+	tokenStore.deviceInfo.device === DeviceType.MOBILE ? 100 : 124
+);
+const inputFontSize = ref(
+	tokenStore.deviceInfo.device == DeviceType.DESKTOP ? '22px' : '18px'
+);
 
 const onLogin = async () => {
 	loading.value = true;
@@ -228,8 +234,6 @@ input[type='password']::-ms-reveal {
 			border: none;
 			padding: 0;
 			margin: 0;
-			text-transform: uppercase;
-			font-size: 22px;
 			caret-color: #ffffff;
 			letter-spacing: 1px;
 			height: 28px;

@@ -1,6 +1,5 @@
 import { boot } from 'quasar/wrappers';
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
-import { useTokenStore } from '../stores/token';
 declare module '@vue/runtime-core' {
 	interface ComponentCustomProperties {
 		$axios: AxiosInstance;
@@ -14,19 +13,13 @@ export default boot(({ app, router }) => {
 	app.config.globalProperties.$api = api;
 	app.config.globalProperties.$axios.interceptors.request.use(
 		(config: AxiosRequestConfig) => {
-			const tokenStore = useTokenStore();
 			config.headers['Access-Control-Allow-Origin'] = '*';
 			config.headers['Access-Control-Allow-Headers'] =
 				'X-Requested-With,Content-Type';
 			config.headers['Access-Control-Allow-Methods'] =
 				'PUT,POST,GET,DELETE,OPTIONS';
 
-			if (tokenStore.token?.access_token) {
-				config.headers['X-Authorization'] = tokenStore.token?.access_token;
-				return config;
-			} else {
-				return config;
-			}
+			return config;
 		}
 	);
 

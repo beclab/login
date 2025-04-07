@@ -68,7 +68,7 @@ export default defineComponent({
 					oneTimePasswordMethod.value
 				);
 				if (data.redirect) {
-					window.location.replace(data.redirect);
+					await tokenStore.replaceToDesktopUrl(data.redirect);
 					handleClearInput();
 				}
 			} catch (err) {

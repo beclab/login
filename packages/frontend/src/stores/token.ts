@@ -112,12 +112,12 @@ export const useTokenStore = defineStore('token', {
 
 		getDesktopURL() {
 			const name = this.user.terminusName.replace('@', '.');
-			let isLocal = false;
-			if (window.location.origin.indexOf('auth.local.' + name) > -1) {
-				isLocal = true;
-			}
+			const isLocal =
+				window.location.origin.indexOf('auth.local.' + name) > -1
+					? 'local.'
+					: '';
 
-			const url = 'https://desktop.' + (isLocal ? 'local.' : '') + name;
+			const url = 'https://desktop.' + isLocal + name;
 			return url;
 		},
 
@@ -130,6 +130,16 @@ export const useTokenStore = defineStore('token', {
 				return true;
 			} catch (error) {
 				return false;
+			}
+		},
+
+		async replaceToDesktopUrl(redirect?: string): Promise<void> {
+			if (typeof window === 'undefined') return;
+
+			if (redirect) {
+				window.location.replace(redirect);
+			} else {
+				window.location.replace(this.getDesktopURL());
 			}
 		}
 	}

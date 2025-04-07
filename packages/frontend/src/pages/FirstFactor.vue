@@ -93,17 +93,7 @@ const onLogin = async () => {
 		if (res.fa2) {
 			tokenStore.currentView = CurrentView.MOBILE_VERIFICATION;
 		} else {
-			if (res.redirect) {
-				window.location.replace(res.redirect);
-			} else {
-				if (typeof window !== 'undefined') {
-					window.location.replace(
-						'https://desktop.' +
-							tokenStore.user.terminusName.replace('@', '.') +
-							'/'
-					);
-				}
-			}
+			await tokenStore.replaceToDesktopUrl(res.redirect);
 		}
 	} catch (err) {
 		BtNotify.show({
